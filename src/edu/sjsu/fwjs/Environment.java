@@ -27,8 +27,14 @@ public class Environment {
      * null is returned (similar to how JS returns undefined.
      */
     public Value resolveVar(String varName) {
-        // YOUR CODE HERE
-        return null;
+        // search in the current scope first
+        if (env.containsKey(varName)) {
+            return env.get(varName);
+        // if not found, search in the outer scope
+        } else if (outerEnv != null) {
+            return outerEnv.resolveVar(varName);
+        }
+        return new NullVal();
     }
 
     /**
@@ -38,6 +44,13 @@ public class Environment {
      */
     public void updateVar(String key, Value v) {
         // YOUR CODE HERE
+        if(env.containsKey(key)) {
+            env.put(key, v);
+        } else if (outerEnv != null) {
+            outerEnv.updateVar(key, v);
+        } else {
+            env.put(key, v);
+        }
     }
 
     /**
@@ -47,5 +60,10 @@ public class Environment {
      */
     public void createVar(String key, Value v) {
         // YOUR CODE HERE
+        if(env.containsKey(key)) {
+            throw new RuntimeException("Variable already defined");
+        } else {
+            env.put(key, v);
+        }
     }
 }
