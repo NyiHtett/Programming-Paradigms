@@ -72,8 +72,35 @@ class BinOpExpr implements Expression {
 
     @SuppressWarnings("incomplete-switch")
     public Value evaluate(Environment env) {
-        // YOUR CODE HERE
-        return null;
+        // evaluate both operands in the current environment
+        Value v1 = e1.evaluate(env);
+        Value v2 = e2.evaluate(env);
+
+        // only numbers are supported, so reject anything that isn't an IntVal
+        if (!(v1 instanceof IntVal) || !(v2 instanceof IntVal)) {
+            throw new RuntimeException("Binary operators expect numbers");
+        }
+
+        // unwrap the Java ints so we can do the math
+        int i = ((IntVal) v1).toInt();
+        int j = ((IntVal) v2).toInt();
+ 
+        // arithmetic ops return an IntVal; comparison ops return a BoolVal
+        switch (op) {
+            case ADD:      return new IntVal(i + j);
+            case SUBTRACT: return new IntVal(i - j);
+            case MULTIPLY: return new IntVal(i * j);
+            case DIVIDE:   return new IntVal(i / j);
+            case MOD:      return new IntVal(i % j);
+            case GT:       return new BoolVal(i > j);
+            case GE:       return new BoolVal(i >= j);
+            case LT:       return new BoolVal(i < j);
+            case LE:       return new BoolVal(i <= j);
+            case EQ:       return new BoolVal(i == j);
+        }
+
+        // reached only if the switch didn't handle the operator
+        throw new RuntimeException("Unknown operator: " + op);
     }
 }
 
@@ -91,8 +118,18 @@ class IfExpr implements Expression {
         this.els = els;
     }
     public Value evaluate(Environment env) {
-        // YOUR CODE HERE
-        return null;
+        // evaluate the condition; it must produce a boolean
+        Value v = cond.evaluate(env);
+        if (!(v instanceof BoolVal)) {
+            throw new RuntimeException("If condition must be a boolean");
+        }
+
+        // evaluate only the branch that was chosen and return its value
+        if (((BoolVal) v).toBoolean()) {
+            return thn.evaluate(env);
+        } else {
+            return els.evaluate(env);
+        }
     }
 }
 
@@ -107,8 +144,21 @@ class WhileExpr implements Expression {
         this.body = body;
     }
     public Value evaluate(Environment env) {
-        // YOUR CODE HERE
-        return null;
+        // re-check the condition before every pass through the loop
+        while (true) {
+            Value v = cond.evaluate(env);
+            if (!(v instanceof BoolVal)) {
+                throw new RuntimeException("While condition must be a boolean");
+            }
+
+            // stop once the condition is false; otherwise run the body again
+            if (!((BoolVal) v).toBoolean()) {
+                break;
+            }
+            body.evaluate(env);
+        }
+        // the while loop has no meaningful result, so it evaluates to null.
+        return new NullVal();
     }
 }
 
@@ -123,8 +173,10 @@ class SeqExpr implements Expression {
         this.e2 = e2;
     }
     public Value evaluate(Environment env) {
-        // YOUR CODE HERE
-        return null;
+        // run e1 for its side effects and discard its value
+        // the whole sequence evaluates to e2's value
+        e1.evaluate(env);
+        return e2.evaluate(env);
     }
 }
 
@@ -139,8 +191,11 @@ class VarDeclExpr implements Expression {
         this.exp = exp;
     }
     public Value evaluate(Environment env) {
-        // YOUR CODE HERE
-        return null;
+        // evaluate the initial value, then declare the variable in the LOCAL scope
+
+        Value v = exp.evaluate(env);
+        env.updateVar(varName, v);
+        return v;
     }
 }
 
@@ -157,8 +212,11 @@ class AssignExpr implements Expression {
         this.e = e;
     }
     public Value evaluate(Environment env) {
-        // YOUR CODE HERE
-        return null;
+        // evaluate the new value, then update the nearest scope that has the variable
+        // if no scope has it, updateVar adds it to the global scope
+        Value eVal = e.evaluate(env);
+        env.updateVar(varName, eVal);
+        return eVal;
     }
 }
 
@@ -173,8 +231,8 @@ class FunctionDeclExpr implements Expression {
         this.body = body;
     }
     public Value evaluate(Environment env) {
-        // YOUR CODE HERE
-        return null;
+        // capture the current environment so the closure remembers it
+        return new ClosureVal(params, body, env);
     }
 }
 
@@ -189,8 +247,21 @@ class FunctionAppExpr implements Expression {
         this.args = args;
     }
     public Value evaluate(Environment env) {
-        // YOUR CODE HERE
-        return null;
+        // evaluate the function expression; it must produce a closure
+        Value fv = f.evaluate(env);
+        if (!(fv instanceof ClosureVal)) {
+            throw new RuntimeException("Attempted to call a non-function");
+        }
+ 
+        // evaluate arguments in the caller's environment
+        List<Value> argVals = new ArrayList<Value>();
+        for (Expression arg : args) {
+            argVals.add(arg.evaluate(env));
+        }
+
+        // apply() binds params to args in a new scope and runs the body
+        return ((ClosureVal) fv).apply(argVals);
     }
 }
+
 
