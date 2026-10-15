@@ -1,3 +1,8 @@
+/**
+ * Authors: Htet, Nyi and Roddy, Hannah
+ * CS152 Fall 2026
+ */
+
 package edu.sjsu.fwjs;
 
 import java.util.Map;
