@@ -197,9 +197,8 @@ class VarDeclExpr implements Expression {
     }
     public Value evaluate(Environment env) {
         // evaluate the initial value, then declare the variable in the LOCAL scope
-
         Value v = exp.evaluate(env);
-        env.updateVar(varName, v);
+        env.createVar(varName, v);
         return v;
     }
 }
