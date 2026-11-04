@@ -1,5 +1,34 @@
 // PART 1: LEXER RULES 
 
+// Reserved words
+IF:         : 'if' ;
+ELSE        : 'else; ;
+WHILE       : 'while' ;
+FUNCTIONq   : 'function' ;
+VAR         : 'var' ;
+PRINT       : 'print' ;
+
+// Literals
+INT         : '0' | [1-9] [0-9]* ;
+BOOL        : 'true' | 'false' ;
+NULL        : 'null' ;
+
+// Symbols
+ADD         : '+' ;
+SUB         : '-' ;
+MUL         : '*' ;
+DIV         : '/' ;
+MOD         : '%' ;
+GT          : '>' ;
+LT          : '<' ;
+GE          : '>=' ;
+LE          : '<=' ;
+EQ          : '==' ;
+ASSIGN      : '=' ;
+SEMI        : ';' ;
+
+// TODO: Identifiers, whitespace and comments
+
 // PART 2: PARSER RULES
 /** starting rules **/
 program: statement+ ;
