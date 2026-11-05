@@ -27,7 +27,14 @@ EQ          : '==' ;
 ASSIGN      : '=' ;
 SEMI        : ';' ;
 
-// TODO: Identifiers, whitespace and comments
+// Identifiers
+ID : [a-zA-Z_] [a-za-Z0-9_]*
+
+// Whitespace and comments
+NEWLINE       : '\r'? '\n' -> skip ;
+BLOCK_COMMENT : '/*' .*? '*/' -> skip ;
+LINE_COMMENT  : '//' ~[\r\n]* -> skip ;
+WS            : [ \t]+ -> skip ;
 
 // PART 2: PARSER RULES
 /** starting rules **/
