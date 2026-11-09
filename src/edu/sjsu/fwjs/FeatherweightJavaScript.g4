@@ -1,4 +1,5 @@
 grammar FeatherweightJavaScript;
+@header { package edu.sjsu.fwjs.parser; }
 
 // PART 1: LEXER RULES 
 
@@ -40,7 +41,7 @@ WS            : [ \t]+ -> skip ;
 
 // PART 2: PARSER RULES
 /** starting rules **/
-program: statement+ ;
+prog: statement+ ;
 
  statement:  expr SEMI         #ExpressionStatement
     | ifStatement              #IfThenElse
