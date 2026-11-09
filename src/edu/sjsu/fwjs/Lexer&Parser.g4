@@ -1,3 +1,9 @@
+/**
+ * Authors: Htet, Nyi and Roddy, Hannah
+ * CS152 Fall 2026
+ */
+
+ 
 // PART 1: LEXER RULES 
 
 // Reserved words
