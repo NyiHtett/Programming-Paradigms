@@ -1,3 +1,8 @@
+/**
+ * Authors: Htet, Nyi and Roddy, Hannah
+ * CS152 Fall 2026
+ */
+
 grammar FeatherweightJavaScript;
 @header { package edu.sjsu.fwjs.parser; }
 
