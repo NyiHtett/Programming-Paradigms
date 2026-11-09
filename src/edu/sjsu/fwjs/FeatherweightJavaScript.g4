@@ -1,10 +1,12 @@
+grammar FeatherweightJavaScript;
+
 // PART 1: LEXER RULES 
 
 // Reserved words
-IF:         : 'if' ;
-ELSE        : 'else; ;
+IF          : 'if' ;
+ELSE        : 'else' ;
 WHILE       : 'while' ;
-FUNCTIONq   : 'function' ;
+FUNCTION   : 'function' ;
 VAR         : 'var' ;
 PRINT       : 'print' ;
 
@@ -28,7 +30,7 @@ ASSIGN      : '=' ;
 SEMI        : ';' ;
 
 // Identifiers
-ID : [a-zA-Z_] [a-za-Z0-9_]*
+ID : [a-zA-Z_] [a-zA-Z0-9_]* ;
 
 // Whitespace and comments
 NEWLINE       : '\r'? '\n' -> skip ;
@@ -40,16 +42,15 @@ WS            : [ \t]+ -> skip ;
 /** starting rules **/
 program: statement+ ;
 
-statement:  expr SEMI        #ExpressionStatement
-    | ifStatement           #IfStatement
-    | whileStatement        #WhileStatement
-    | printStatement        #PrintStatement
-    | SEMI             #EmptyStatement
+ statement:  expr SEMI         #ExpressionStatement
+    | ifStatement              #IfThenElse
+    | whileStatement           #While
+    | printStatement           #Print
+    | '{' statement* '}'       #Block
+    | SEMI                     #EmptyStatement
     ;
 
-ifStatement : IF '(' expr ')' statement
-              (ELSE statement) ?
-            ;
+ifStatement : IF '(' expr ')' statement (ELSE statement)? ;
 
 whileStatement : WHILE '(' expr ')' statement;
 
